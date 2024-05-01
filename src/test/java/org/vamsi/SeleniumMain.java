@@ -1,5 +1,6 @@
 package org.vamsi;
 
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -26,6 +27,7 @@ public class SeleniumMain {
         return  driver;
     }
 
+
     public static void main(String[] args) {
         WebDriver driver=null;
         try {
@@ -36,10 +38,14 @@ public class SeleniumMain {
             driver.manage().window().maximize();
             driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
-            driver.navigate().to(props.getProperty("website").trim());
-            String actSiteNameVal = driver.findElement(By.xpath(props.getProperty("siteName").trim())).getText().trim();
-            logger.info(String.format("[%s] Actual site name = %s", SeleniumMain.class.getName(), actSiteNameVal));
-            Assert.assertEquals(actSiteNameVal, "Selenium Easy", "Site name didn't match");
+            /*
+                driver.navigate().to(props.getProperty("website").trim());
+                String actSiteNameVal = driver.findElement(By.xpath(props.getProperty("siteName").trim())).getText().trim();
+                logger.info(String.format("[%s] Actual site name = %s", SeleniumMain.class.getName(), actSiteNameVal));
+                Assert.assertEquals(actSiteNameVal, "Selenium Easy", "Site name didn't match");
+            */
+
+            DatePickerJ.pickDateFromCalendar(props, driver, "20230323");
         }
         catch (Exception e){
             e.printStackTrace();

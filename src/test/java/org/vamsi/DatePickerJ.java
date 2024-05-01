@@ -1,6 +1,7 @@
 package org.vamsi;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -38,7 +39,7 @@ public class DatePickerJ {
             logger.info(String.format("%s, %s, %s", year, month, day));
 
             //prev and next button on calendar
-            WebDriverWait wait = new WebDriverWait(driver, 5);
+            WebDriverWait wait = new WebDriverWait(driver, 2);
 
             WebElement prevButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(props.getProperty("prevButton"))));
             WebElement nextButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(props.getProperty("nextButton"))));
@@ -51,17 +52,32 @@ public class DatePickerJ {
 
                 yearFromUi = driver.findElement(By.xpath(props.getProperty("yearElement"))).getText().trim();
 
-                if(year > Integer.parseInt(yearFromUi)){
+                if(year < Integer.parseInt(yearFromUi)){
                     Thread.sleep(2000);
-                    prevButton.click();
+                    try{
+                        prevButton.click();
+                    }
+                    catch (StaleElementReferenceException st){
+                        System.out.println("Expection for previous button...trying again");
+                        prevButton= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(props.getProperty("prevButton"))));
+                        prevButton.click();
+                    }
                     System.out.println("Prev clicked");
-                } else if (year < Integer.parseInt(yearFromUi)) {
+                } else if (year > Integer.parseInt(yearFromUi)) {
                     Thread.sleep(2000);
-                    nextButton.click();
+                    try {
+                        nextButton.click();
+                    }
+                    catch (StaleElementReferenceException st){
+                        System.out.println("Exception for next button...trying again");
+                        nextButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(props.getProperty("nextButton"))));
+                        nextButton.click();
+                    }
                     System.out.println("Next clicked");
                 }
 
                 isYearSame = year == Integer.parseInt(yearFromUi);
+                System.out.println("Year: "+year+", Year from UI: "+ yearFromUi +", isYearSame = " + isYearSame);
 
                 //if year matches start matching months.
                 if(isYearSame){
@@ -79,11 +95,25 @@ public class DatePickerJ {
 
                         if(monthFromUiValue > monthExpValue){
                             Thread.sleep(2000);
-                            prevButton.click();
+                            try{
+                                prevButton.click();
+                            }
+                            catch (StaleElementReferenceException st){
+                                System.out.println("Exception for previous button...trying again");
+                                prevButton= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(props.getProperty("prevButton"))));
+                                prevButton.click();
+                            }
                             System.out.println("Prev clicked");
                         }else if (monthFromUiValue < monthExpValue){
                             Thread.sleep(2000);
-                            nextButton.click();
+                            try {
+                                nextButton.click();
+                            }
+                            catch (StaleElementReferenceException st){
+                                System.out.println("Exception for next button...trying again");
+                                nextButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(props.getProperty("nextButton"))));
+                                nextButton.click();
+                            }
                             System.out.println("Next clicked");
                         }
 
@@ -101,7 +131,7 @@ public class DatePickerJ {
             }
         }
         catch (Exception e){
-            logger.info(e.getMessage());
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
 

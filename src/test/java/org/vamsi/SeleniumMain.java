@@ -45,7 +45,7 @@ public class SeleniumMain {
                 Assert.assertEquals(actSiteNameVal, "Selenium Easy", "Site name didn't match");
             */
 
-            DatePickerJ.pickDateFromCalendar(props, driver, "20230323");
+            DatePickerJ.pickDateFromCalendar(props, driver, "20240323");
         }
         catch (Exception e){
             e.printStackTrace();
